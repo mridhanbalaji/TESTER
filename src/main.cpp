@@ -104,7 +104,7 @@ void opcontrol() {
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
 		
-		Shooter::shoot(1000, 1500, 2000, 2500, 3000);
+		Shooter::shoot(1000, 1500, 2000, 2499, 3000);
 		Intake::roll();
 		Train::setStop(pros::E_MOTOR_BRAKE_COAST);
 		Train::robotCentric();
