@@ -28,14 +28,20 @@ void Train::setStop(pros::motor_brake_mode_e mode){
   left_top_motor.set_brake_mode(mode);
 }
 
+double Train::getRightVolt(){
+  return (right_back_motor.get_voltage() + right_front_motor.get_voltage() + right_top_motor.get_voltage()) / 3.0;
+}
+
+double Train::getLeftVolt(){
+  return (left_back_motor.get_voltage() + left_front_motor.get_voltage() + left_top_motor.get_voltage()) / 3.0;
+}
+
 //DRIVER CONTROL FUNCTIONS
-double preRVEL = 0;
-double preLVEL = 0;
-double preRACCEL = 0;
-double preLACCEL = 0;
-const double dt = 0.000166667; //in mins
-const double maxACCEL = 10;
-const double maxJERK = 10;
+double prevLeftPower = 0;
+double prevRightPower = 0;
+
+double maxVoltperTime = 10;
+double dt = 0.01;
 
 void Train::robotCentric(){
   int controllerY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -45,50 +51,20 @@ void Train::robotCentric(){
   if(abs(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) < 5) {controllerY = 0;}
   if(abs(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) < 5) {controllerX = 0;}
 
-  double LeftVel = -(controllerY + controllerX);
-  double RightVel = -(controllerY - controllerX);
+  double desiredLeftPower = -(controllerY + controllerX); desiredLeftPower = desiredLeftPower > 127 ? 127 : desiredLeftPower < -127 ? -127 : desiredLeftPower; //BOUNDING STATEMENT
+  double desiredRightPower = -(controllerY - controllerX); desiredRightPower = desiredRightPower > 127 ? 127 : desiredRightPower < -127 ? -127 : desiredRightPower;
 
+  currentLeftPower = getLeftVolt() / 100; //CONVERTS mV TO POWER
+  currentRightPower = getRightVolt() / 100;
 
-  double RVEL = 5* RightVel;
-  double LVEL = 5* LeftVel;
+  double leftVoltperTime = (prevLeftPower - currentLeftPower) / dt; leftVoltperTime = leftVoltperTime > maxVoltperTime ? maxVoltperTime : leftVoltperTime < -maxVoltperTime ? -maxVoltperTime : leftVoltperTime;
+  double rightVoltperTime = (prevRightPower - currentRightPower) / dt; rightVoltperTime = rightVoltperTime > maxVoltperTime ? maxVoltperTime : rightVoltperTime < -maxVoltperTime ? -maxVoltperTime : rightVoltperTime;
 
-  double RACCEL = (RVEL - preRVEL) / dt; RACCEL = abs(RACCEL) > maxACCEL ? maxACCEL : RACCEL;
-  double LACCEL = (LVEL - preLVEL) / dt; LACCEL = abs(LACCEL) > maxACCEL ? maxACCEL : LACCEL;
+  double leftPower = prevLeftPower + (leftVoltperTime * dt);
+  double rightPower = prevRightPower + (rightVoltperTime * dt);
 
-  double RJERK = (RACCEL - preRACCEL) / dt; RJERK = abs(RJERK) > maxJERK ? maxJERK : RJERK;
-  double LJERK = (LACCEL - preLACCEL) / dt; LJERK = abs(LJERK) > maxJERK ? maxJERK : LJERK;
-
-  double RACCEL_limited = (RJERK * dt) + preRACCEL;
-  double LACCEL_limited = (LJERK * dt) + preLACCEL;
-
-  double RVEL_limited = (RACCEL * dt) + preRVEL;
-  double LVEL_limited = (LACCEL * dt) + preLVEL;
+  prevLeftPower = currentLeftPower;
+  prevRightPower = currentRightPower;
   
-  preRVEL = RVEL;
-  preLVEL = LVEL;
-  
-  preRACCEL = RACCEL;
-  preLACCEL = LACCEL;
-
-  if (RVEL > 600) {
-		RVEL = 600;
-	} 
-  else if (RVEL < -600){ 
-      RVEL = -600;
-  }
-
-  if (LVEL > 600) {
-		LVEL = 600;
-	} 
-  else if (LVEL < -600){
-    LVEL = -600;
-  }
-
-  
-
-  if (RVEL > PREVEL){
-    pros::lcd::print(2,"%d",PREVEL);
-  }
-  
-  setVolt(RVEL, LVEL);
+  setVolt(leftPower, rightPower);
 }
