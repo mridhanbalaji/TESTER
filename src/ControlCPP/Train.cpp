@@ -28,8 +28,20 @@ void Train::setStop(pros::motor_brake_mode_e mode){
   left_top_motor.set_brake_mode(mode);
 }
 
+double Train::getRightVolt(){
+  return (right_back_motor.get_voltage() + right_front_motor.get_voltage() + right_top_motor.get_voltage()) / 3.0;
+}
+
+double Train::getLeftVolt(){
+  return (left_back_motor.get_voltage() + left_front_motor.get_voltage() + left_top_motor.get_voltage()) / 3.0;
+}
+
 //DRIVER CONTROL FUNCTIONS
-int PREVEL = 0;
+double prevLeftPower = 0;
+double prevRightPower = 0;
+
+double maxVoltperTime = 10;
+double dt = 0.01;
 
 void Train::robotCentric(){
   int controllerY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -39,30 +51,20 @@ void Train::robotCentric(){
   if(abs(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) < 5) {controllerY = 0;}
   if(abs(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) < 5) {controllerX = 0;}
 
-  int LeftVel = -(controllerY + controllerX);
-  int RightVel = -(controllerY - controllerX);
+  double desiredLeftPower = -(controllerY + controllerX); desiredLeftPower = desiredLeftPower > 127 ? 127 : desiredLeftPower < -127 ? -127 : desiredLeftPower; //BOUNDING STATEMENT
+  double desiredRightPower = -(controllerY - controllerX); desiredRightPower = desiredRightPower > 127 ? 127 : desiredRightPower < -127 ? -127 : desiredRightPower;
 
+  currentLeftPower = getLeftVolt() / 100; //CONVERTS mV TO POWER
+  currentRightPower = getRightVolt() / 100;
 
-  int RVEL = 5* RightVel;
-  int LVEL = 5* LeftVel;
+  double leftVoltperTime = (prevLeftPower - currentLeftPower) / dt; leftVoltperTime = leftVoltperTime > maxVoltperTime ? maxVoltperTime : leftVoltperTime < -maxVoltperTime ? -maxVoltperTime : leftVoltperTime;
+  double rightVoltperTime = (prevRightPower - currentRightPower) / dt; rightVoltperTime = rightVoltperTime > maxVoltperTime ? maxVoltperTime : rightVoltperTime < -maxVoltperTime ? -maxVoltperTime : rightVoltperTime;
 
-  if (RVEL > 600) {
-		RVEL = 600;
-	} 
-  else if (RVEL < -600){ 
-      RVEL = -600;
-  }
+  double leftPower = prevLeftPower + (leftVoltperTime * dt);
+  double rightPower = prevRightPower + (rightVoltperTime * dt);
 
-  if (LVEL > 600) {
-		LVEL = 600;
-	} 
-  else if (LVEL < -600){
-    LVEL = -600;
-  }
-
-  if (RVEL > PREVEL){
-    pros::lcd::print(2,"%d",PREVEL);
-  }
+  prevLeftPower = currentLeftPower;
+  prevRightPower = currentRightPower;
   
-  setVel(RVEL,LVEL);
+  setVolt(leftPower, rightPower);
 }
