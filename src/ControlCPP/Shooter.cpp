@@ -26,12 +26,12 @@ bool buttonRegistered_shooter = false;
 
 
 
-void Shooter::shoot(int X, int A, int B, int Y, int L2) {
+void Shooter::shoot(int X, int A, int B, int Y) {
   buttonX_pressed = master.get_digital( pros::E_CONTROLLER_DIGITAL_X);
   buttonA_pressed = master.get_digital( pros::E_CONTROLLER_DIGITAL_A);
   buttonB_pressed = master.get_digital( pros::E_CONTROLLER_DIGITAL_B);
   buttonY_pressed = master.get_digital( pros::E_CONTROLLER_DIGITAL_Y);
-  buttonL2_pressed = master.get_digital( pros::E_CONTROLLER_DIGITAL_L2);
+
   
   if(buttonX_pressed && !buttonRegistered_shooter) {
     toggleShoot(X);
@@ -47,10 +47,6 @@ void Shooter::shoot(int X, int A, int B, int Y, int L2) {
   }
   else if(buttonY_pressed && !buttonRegistered_shooter) {
     toggleShoot(Y);
-    buttonRegistered_shooter = true;
-  }
-  else if(buttonL2_pressed && !buttonRegistered_shooter) {
-    toggleShoot(L2);
     buttonRegistered_shooter = true;
   }
   else {

@@ -1,5 +1,7 @@
 class Indexer {
   public:
     static void push();
-    static void RapidFire();
+    static void rapidFire();
+    static void angle();
+    static void selectShooter();
 };

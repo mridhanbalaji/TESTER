@@ -51,3 +51,4 @@ extern pros::Controller master;
 extern pros::ADIDigitalOut indexer1;
 extern pros::ADIDigitalOut expansion;
 extern pros::ADIDigitalOut expansionblocker;
+extern pros::ADIDigitalOut angler;
