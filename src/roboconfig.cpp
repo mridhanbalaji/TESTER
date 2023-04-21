@@ -108,4 +108,4 @@ pros::ADIDigitalOut expansionblocker('B');
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
-pros::ADIDigitalOut angler({8,'A'});
+pros::ADIDigitalOut angler({{8,'A'}});

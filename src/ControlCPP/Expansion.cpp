@@ -23,7 +23,7 @@ void Expansion::launch() {
 bool expansion_blockOn = false;
 bool buttonRegistered_pneumatic2 = false;
 void Expansion::launch_blocker() {
-    if(master.get_digital(E_CONTROLLER_DIGITAL_DOWN)) {
+    if(master.get_digital(E_CONTROLLER_DIGITAL_RIGHT)) {
       if(!buttonRegistered_pneumatic2) {
         //HAPPENS ONCE BUTTON IS PRESSED
         expansion_blockOn = !expansion_blockOn;
