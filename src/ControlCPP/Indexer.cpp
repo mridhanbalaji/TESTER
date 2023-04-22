@@ -1,6 +1,14 @@
 #include "roboconfig.h"
 bool buttonRegistered_indexer = false;
-void Indexer::push() {
+void Indexer::pushsingle() {
+    indexer1.set_value(true);
+    pros::delay(125);
+    indexer1.set_value(false);
+    pros::delay(125);
+    
+}
+
+void Indexer::pushtriple() {
     indexer1.set_value(true);
     pros::delay(125);
     indexer1.set_value(false);
@@ -31,14 +39,17 @@ bool anglerOn = false;
 bool buttonRegistered_angler = false;
 
 void Indexer::angle() {
-  if(master.get_digital(DIGITAL_UP) && !buttonRegistered_angler){
-    anglerOn = !anglerOn; 
-    buttonRegistered_angler = true;
+  if(master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)){
+    if(!buttonRegistered_angler) {
+      anglerOn = !anglerOn; 
+      buttonRegistered_angler = true;
+    }
   }
   else {
     buttonRegistered_angler = false;
   }
   angler.set_value(anglerOn);
+  pros::lcd::print(4,"Angle");
 }
 
 
@@ -79,65 +90,79 @@ int noAnglerShot = 2;
 bool singleShotOn = false;
 bool tripleShotOn = false;
 
-int shooterMode;;
+int shooterMode;
 
-bool checkAngler(){
+void checkAngler(){
   if (anglerOn){
-      shooterMode = 2;
-    }
-    else {
-      shooterMode = 3;
-    }
+    shooterMode = 2;
+  }
+  else {
+    shooterMode = 3;
+  }
 }
 
 void Indexer::selectShooter(){
-  if (master.get_digital(DIGITAL_L1) && !buttonRegistered_indexer && !singleShotOn){
-    buttonRegistered_indexer = true; 
-    Indexer::push();
-  }
-  else if (singleShotOn){
-    buttonRegistered_indexer = true; 
-    tripleShotOn = true;
-    singleShotOn = false;
-    master.rumble(".");
-    shooterMode = 1;
-    angler.set_value(false);
-
+  if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+    if(tripleShotOn){
+      if(!buttonRegistered_indexer){
+        buttonRegistered_indexer = true; 
+        Indexer::pushtriple();
+      }
+    }
+  
+    else if (singleShotOn){
+      buttonRegistered_indexer = true; 
+      tripleShotOn = true;
+      singleShotOn = false;
+      master.rumble(".");
+      shooterMode = 1;
+      angler.set_value(false);
+    }
   }
   else {
     buttonRegistered_indexer = false;
   }
 
-  if (master.get_digital(DIGITAL_L2) && !buttonRegistered_indexer && !tripleShotOn){
-    buttonRegistered_indexer = true;
-    checkAngler();
-    Indexer::push();
+  if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+    if (!tripleShotOn){
+      if(!buttonRegistered_indexer){ 
+        buttonRegistered_indexer = true;
+        checkAngler();
+        Indexer::pushsingle();
+      }
+    }
+    else if (tripleShotOn){
+      buttonRegistered_indexer = true; 
+      tripleShotOn = false;
+      singleShotOn = true;
+      master.rumble(".");
+      checkAngler();
+    }
   }
-  else if (tripleShotOn){
-    buttonRegistered_indexer = true; 
-    tripleShotOn = false;
-    singleShotOn = true;
-    master.rumble(".");
-    checkAngler();
+  else {
+    buttonRegistered_indexer = false;
   }
 
   switch (shooterMode) {
     //triple
     case 1:
-      flywheel.set_velocity_custom_controller(2900);
+      flywheel.set_velocity_custom_controller(200);
       anglerOn = false;
+      pros::lcd::print(4,"Triple");
     break;
 
     //single Angler
     case 2:
-      flywheel.set_velocity_custom_controller(1400);
+      flywheel.set_velocity_custom_controller(3500);
       anglerOn = true;
+      pros::lcd::print(4,"SingleYES");
     break;
 
     //single no angler
     case 3:
-      flywheel.set_velocity_custom_controller(1300);
+      flywheel.set_velocity_custom_controller(1000);
       anglerOn = false;
+      pros::lcd::print(4,"singleNO");
     break;
   }
 }

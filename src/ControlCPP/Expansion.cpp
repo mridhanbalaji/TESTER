@@ -11,7 +11,7 @@ void Expansion::launch() {
         //HAPPENS ONCE BUTTON IS PRESSED
         expansionOn = !expansionOn;
         buttonRegistered_pneumatic = true;
-        pros::lcd::print(6, "EXPAND!!!!!!");
+        pros::lcd::print(4, "EXPAND!!!!!!");
       }
     }
     else {
@@ -28,7 +28,7 @@ void Expansion::launch_blocker() {
         //HAPPENS ONCE BUTTON IS PRESSED
         expansion_blockOn = !expansion_blockOn;
         buttonRegistered_pneumatic2 = true;
-        pros::lcd::print(6, "BLOCK!!!!!!");
+        pros::lcd::print(4, "BLOCK!!!!!!");
       }
     }
     else {

@@ -42,7 +42,7 @@ void initialize() {
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello PROS User!");
 	pros::lcd::register_btn1_cb(on_center_button);
-	chassis.calibrate();
+	// chassis.calibrate();
 	pros::Task screenTask(screen);
 	sylib::initialize();
 }
@@ -115,6 +115,7 @@ void opcontrol() {
 		// Indexer::rapidFire();
 		Expansion::launch();
 		Expansion::launch_blocker();
+		Indexer::angle();
 		pros::delay(20);
 	}
 }

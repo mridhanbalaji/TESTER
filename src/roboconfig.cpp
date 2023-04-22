@@ -103,9 +103,10 @@ pros::Motor Intakemotor(10,pros::E_MOTOR_GEAR_600,true);
 
 //ALL PNEUMATICS
 pros::ADIDigitalOut indexer1 ('A');
+// pros::ADIDigitalOut indexer2 ('E');
 pros::ADIDigitalOut expansion ('C');
 pros::ADIDigitalOut expansionblocker('B');
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
-pros::ADIDigitalOut angler({{8,'A'}});
+pros::ADIDigitalOut angler('D');
