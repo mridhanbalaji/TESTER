@@ -5,4 +5,5 @@ class Indexer {
     static void angle();
     static void selectShooter();
     static void pushtriple();
+    static void shoot();
 };
