@@ -2,16 +2,29 @@
 
 void Indexer::pushsingle() {
       indexer1.set_value(true);
-      pros::delay(175);
+      pros::delay(95);
       indexer1.set_value(false);
-      pros::delay(125);
+      pros::delay(95);
 }
 
 void Indexer::pushtriple() {
       indexer2.set_value(true);
-      pros::delay(175);
+      pros::delay(150);
       indexer2.set_value(false);
-      pros::delay(125);
+      pros::delay(150);
+}
+
+void Indexer::singleDouble(){
+  angler.set_value(true);
+  indexer1.set_value(true);
+  pros::delay(125);
+  indexer1.set_value(false);
+  pros::delay(125);
+  angler.set_value(false);
+  indexer2.set_value(true);
+  pros::delay(150);
+  indexer2.set_value(false);
+  pros::delay(150);
 }
 
 bool anglerOn = false;

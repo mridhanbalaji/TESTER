@@ -17,3 +17,17 @@ int Intake::roll() {
   
   return 1;
 }
+
+void Intake::fwdspin(){
+  Intakemotor.move(127);
+}
+
+void Intake::revspin(){
+  Intakemotor.move(-127);
+
+}
+
+void Intake::intstop(){
+  Intakemotor.move(0);
+
+}

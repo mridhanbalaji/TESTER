@@ -42,11 +42,14 @@ void initialize() {
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello PROS User!");
 	pros::lcd::register_btn1_cb(on_center_button);
-	// chassis.calibrate();
+	chassis.calibrate();
+	chassis.setPose(12, -59, 46.75);
 	pros::Task screenTask(screen);
 	sylib::initialize();
 }
-
+//15.1 -57.5 0 `
+// Next angled coordiate ( mupp is  a monkey)
+// 14.56 -60.16 46.75
 /**
  * Runs while the robot is in the disabled state of Field Management System or
  * the VEX Competition Switch, following either autonomous or opcontrol. When
@@ -77,14 +80,81 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	// chassis.moveTo(0,25,5000);
-	// chassis.turnTo(0,-10,1000000);
-	// chassis.turnTo(0,-10,100000);
-	// chassis.turnTo(-30,15,100000);
-	// chassis.moveTo(0,0,5000);
-	// chassis.turnTo(0, 30,3000);
-	chassis.follow("path (11).txt", 100000,10);
+	flywheel.set_velocity_custom_controller(2260);
+	Intake::fwdspin();
+	chassis.follow("path-18.txt", 1500,10);
+	pros::delay(350);
+	Intake::intstop();
+	Train::setVolt(-120,-90);
+	pros::delay(200);
+	Train::setVel(0,0);
+	chassis.turnTo(54,48,2000,true);
+	Indexer::pushsingle();
+	pros::delay(220);
+	Indexer::pushsingle();
+	pros::delay(220);
+	Indexer::pushsingle();
+	pros::delay(200);
+	Indexer::pushtriple();
+	chassis.turnTo(25,-57,1500,false);
+	chassis.moveTo(25,-57,5000);
+	Train::setVolt(-127,127);
+	pros::delay(40);
+	Train::setVolt(0,0);
+	Intake::revspin();
+	Train::setVolt(127,127);
+	pros::delay(450);
+	Train::setVolt(-127,-127);
+	pros::delay(50);
+	Train::setVolt(0,0);
+	flywheel.set_velocity_custom_controller(2175);
+	chassis.turnTo(18,-43,5000,true);
+	chassis.moveTo(18,-43,5000);
+	Intake::fwdspin();
+	chassis.turnTo(0,-24,5000);
+	chassis.follow("path-24.txt",10000,10);
+	chassis.turnTo(58,47,3000,true);
+	pros::delay(550);
+	indexer2.set_value(true);
+	pros::delay(60);
+	indexer2.set_value(false);
+	pros::delay(50);
+	indexer2.set_value(true);
+	pros::delay(60);
+	indexer2.set_value(false);
+	pros::delay(50);
+	Indexer::pushsingle();
+	pros::delay(240);
+	Indexer::pushsingle();
+	pros::delay(260);
+	Indexer::pushsingle();
+	pros::delay(100);
+	Indexer::pushtriple();
+	// then the angle is
+	chassis.moveTo(-18,-8,5000);
+	chassis.turnTo(-20.3,-19,5000, false);
+	flywheel.set_velocity_custom_controller(2375);
+	Intake::fwdspin();
+	Train::setVolt(90,90);
+	pros::delay(1600);
+	Train::setVolt(0,0);
+	pros::delay(100);
+	Train::setVolt(-90,-90);
+	pros::delay(850);
+	chassis.turnTo(55,46,3000,true);
+	indexer2.set_value(true);
+	pros::delay(60);
+	indexer2.set_value(false);
+	pros::delay(50);
+	Indexer::pushsingle();
+	pros::delay(240);
+	Indexer::pushsingle();
+	pros::delay(240);
+	Indexer::pushsingle();
+	Indexer::pushtriple();
 }
+//54.4 19.8 -88
+//56.7 14.34 -37.73 ( this is the pointa for the angl before shooting)
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -106,7 +176,7 @@ void opcontrol() {
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
 		
-		Shooter::shoot(1700, 1900, 2200, 2500);
+		Shooter::shoot(1725, 2075, 2075, 1725);
 		Intake::roll();
 		Train::setStop(pros::E_MOTOR_BRAKE_COAST);
 		Train::robotCentric();

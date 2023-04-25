@@ -16,6 +16,12 @@ void Shooter::toggleShoot(int buttonVel) {
     shooterVel = 0;
 }
 
+void Shooter::changeShoot(int changeVel) {
+  shooterOn = !shooterOn;
+  if(shooterOn)
+    shooterVel += changeVel;
+}
+
 bool buttonX_pressed = master.get_digital( pros::E_CONTROLLER_DIGITAL_X);
 bool buttonA_pressed = master.get_digital( pros::E_CONTROLLER_DIGITAL_A);
 bool buttonB_pressed = master.get_digital( pros::E_CONTROLLER_DIGITAL_B);
@@ -27,7 +33,7 @@ bool buttonRegistered_shooter = false;
 
 
 void Shooter::shoot(int X, int A, int B, int Y) {
-  buttonX_pressed = master.get_digital( pros::E_CONTROLLER_DIGITAL_X);
+  buttonX_pressed = master.get_digital(pros::E_CONTROLLER_DIGITAL_X);
   buttonA_pressed = master.get_digital( pros::E_CONTROLLER_DIGITAL_A);
   buttonB_pressed = master.get_digital( pros::E_CONTROLLER_DIGITAL_B);
   buttonY_pressed = master.get_digital( pros::E_CONTROLLER_DIGITAL_Y);
@@ -35,7 +41,7 @@ void Shooter::shoot(int X, int A, int B, int Y) {
   
   if(buttonX_pressed) {
     if (!buttonRegistered_shooter){ 
-      toggleShoot(X);
+      changeShoot(100);
       buttonRegistered_shooter = true;
     }
   }
@@ -47,7 +53,7 @@ void Shooter::shoot(int X, int A, int B, int Y) {
   }
   else if(buttonB_pressed) {
     if (!buttonRegistered_shooter){
-      toggleShoot(B);
+      changeShoot(-100);
       buttonRegistered_shooter = true;
     }
   }
@@ -60,6 +66,7 @@ void Shooter::shoot(int X, int A, int B, int Y) {
   else {
     buttonRegistered_shooter = false;
   }
-    flywheel.set_velocity_custom_controller(shooterVel);
-    pros::lcd::print(6, "Shooter RPM: %f", flywheel.get_velocity());
+    flywheel.set_velocity_custom_controller(shooterVel);\
+    master.print(1, 1, "Shooter RPM: %f", flywheel.get_velocity());
+    master.print(2, 1, "Target RPM: %f", shooterVel);
 }
