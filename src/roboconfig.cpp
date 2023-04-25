@@ -1,8 +1,7 @@
 #include "roboconfig.h"
 
-
-
-
+const double varE
+ = 2.718281828459045;
 
 
 // drivetrain motors
@@ -77,7 +76,7 @@ lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensor
 
 sylib::SpeedControllerInfo flywheelController(
     [](double rpm) {
-      return std::pow(M_E, (-0.001 * rpm * 3600 / 3600 + 1)) + 3.065;
+      return std::pow(varE, (-0.001 * rpm * 3600 / 3600 + 1)) + 3.065;
     },     // kV function
     10,    // kP
     0.001, // kI00097
@@ -104,8 +103,10 @@ pros::Motor Intakemotor(10,pros::E_MOTOR_GEAR_600,true);
 
 //ALL PNEUMATICS
 pros::ADIDigitalOut indexer1 ('A');
+pros::ADIDigitalOut expansionblocker({{9,'A'}});
 pros::ADIDigitalOut expansion ('C');
-pros::ADIDigitalOut expansionblocker('B');
+pros::ADIDigitalOut indexer2('B');
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
+pros::ADIDigitalOut angler('D');

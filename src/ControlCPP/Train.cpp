@@ -40,8 +40,10 @@ double Train::getLeftVolt(){
 double prevLeftPower = 0;
 double prevRightPower = 0;
 
-double maxVoltperTime = 10;
+double maxVoltperTime = 8000000000;
 double dt = 0.01;
+double currentRightPower = 0;
+double currentLeftPower = 0;
 
 void Train::robotCentric(){
   int controllerY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -51,20 +53,22 @@ void Train::robotCentric(){
   if(abs(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) < 5) {controllerY = 0;}
   if(abs(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) < 5) {controllerX = 0;}
 
-  double desiredLeftPower = -(controllerY + controllerX); desiredLeftPower = desiredLeftPower > 127 ? 127 : desiredLeftPower < -127 ? -127 : desiredLeftPower; //BOUNDING STATEMENT
-  double desiredRightPower = -(controllerY - controllerX); desiredRightPower = desiredRightPower > 127 ? 127 : desiredRightPower < -127 ? -127 : desiredRightPower;
+  double desiredLeftPower = controllerY - controllerX; desiredLeftPower = desiredLeftPower > 127 ? 127 : desiredLeftPower < -127 ? -127 : desiredLeftPower; //BOUNDING STATEMENT
+  double desiredRightPower = controllerY + controllerX; desiredRightPower = desiredRightPower > 127 ? 127 : desiredRightPower < -127 ? -127 : desiredRightPower;
 
-  currentLeftPower = getLeftVolt() / 100; //CONVERTS mV TO POWER
-  currentRightPower = getRightVolt() / 100;
+  currentLeftPower = desiredLeftPower;//CONVERTS mV TO POWER
+  currentRightPower = desiredRightPower;
 
-  double leftVoltperTime = (prevLeftPower - currentLeftPower) / dt; leftVoltperTime = leftVoltperTime > maxVoltperTime ? maxVoltperTime : leftVoltperTime < -maxVoltperTime ? -maxVoltperTime : leftVoltperTime;
-  double rightVoltperTime = (prevRightPower - currentRightPower) / dt; rightVoltperTime = rightVoltperTime > maxVoltperTime ? maxVoltperTime : rightVoltperTime < -maxVoltperTime ? -maxVoltperTime : rightVoltperTime;
+  double leftVoltperTime = (currentLeftPower - prevLeftPower ) / dt; leftVoltperTime = leftVoltperTime > maxVoltperTime ? maxVoltperTime : leftVoltperTime < -maxVoltperTime ? -maxVoltperTime : leftVoltperTime;
+  double rightVoltperTime = (currentRightPower - prevRightPower) / dt; rightVoltperTime = rightVoltperTime > maxVoltperTime ? maxVoltperTime : rightVoltperTime < -maxVoltperTime ? -maxVoltperTime : rightVoltperTime;
 
   double leftPower = prevLeftPower + (leftVoltperTime * dt);
   double rightPower = prevRightPower + (rightVoltperTime * dt);
 
-  prevLeftPower = currentLeftPower;
-  prevRightPower = currentRightPower;
+  prevLeftPower = getLeftVolt() / 100;
+  prevRightPower = getRightVolt() / 100;
   
   setVolt(leftPower, rightPower);
+  pros::lcd::print(7, "Right: %f", currentLeftPower);
+  pros::lcd::print(8, "Left: %f", currentRightPower);
 }

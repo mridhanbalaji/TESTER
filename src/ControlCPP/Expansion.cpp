@@ -11,7 +11,7 @@ void Expansion::launch() {
         //HAPPENS ONCE BUTTON IS PRESSED
         expansionOn = !expansionOn;
         buttonRegistered_pneumatic = true;
-        pros::lcd::print(6, "EXPAND!!!!!!");
+        pros::lcd::print(4, "EXPAND!!!!!!");
       }
     }
     else {
@@ -23,12 +23,12 @@ void Expansion::launch() {
 bool expansion_blockOn = false;
 bool buttonRegistered_pneumatic2 = false;
 void Expansion::launch_blocker() {
-    if(master.get_digital(E_CONTROLLER_DIGITAL_DOWN)) {
+    if(master.get_digital(E_CONTROLLER_DIGITAL_RIGHT)) {
       if(!buttonRegistered_pneumatic2) {
         //HAPPENS ONCE BUTTON IS PRESSED
         expansion_blockOn = !expansion_blockOn;
         buttonRegistered_pneumatic2 = true;
-        pros::lcd::print(6, "BLOCK!!!!!!");
+        pros::lcd::print(4, "BLOCK!!!!!!");
       }
     }
     else {
