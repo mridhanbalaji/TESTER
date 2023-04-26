@@ -53,8 +53,8 @@ void Train::robotCentric(){
   if(abs(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) < 5) {controllerY = 0;}
   if(abs(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) < 5) {controllerX = 0;}
 
-  double desiredLeftPower = controllerY + controllerX; desiredLeftPower = desiredLeftPower > 127 ? 127 : desiredLeftPower < -127 ? -127 : desiredLeftPower; //BOUNDING STATEMENT
-  double desiredRightPower = controllerY - controllerX; desiredRightPower = desiredRightPower > 127 ? 127 : desiredRightPower < -127 ? -127 : desiredRightPower;
+  double desiredLeftPower = controllerY - controllerX; desiredLeftPower = desiredLeftPower > 127 ? 127 : desiredLeftPower < -127 ? -127 : desiredLeftPower; //BOUNDING STATEMENT
+  double desiredRightPower = controllerY + controllerX; desiredRightPower = desiredRightPower > 127 ? 127 : desiredRightPower < -127 ? -127 : desiredRightPower;
 
   currentLeftPower = desiredLeftPower;//CONVERTS mV TO POWER
   currentRightPower = desiredRightPower;
